@@ -1,0 +1,21 @@
+FROM ubuntu:latest
+
+LABEL autor="JPR"
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    ssh \
+    sudo \
+    && apt-get clean
+
+# Crear un usuario llamado "usuario" y configurarlo como sudo
+RUN useradd -ms /bin/bash usuario && echo "usuario ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Configurar SSH
+RUN mkdir /var/run/sshd && \
+    echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config && \
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+
+# Iniciar SSH en segundo plano
+CMD ["/etc/init.d/ssh", "start"]
